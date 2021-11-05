@@ -7,7 +7,8 @@ import numpy as np
 # from dm_control.suite.wrappers import action_scale, pixels
 from dm_env import StepType, specs
 
-import custom_dmc_tasks as cdmc
+# import custom_dmc_tasks as cdmc
+print('WARNING: import cdmc commented to prevent mujoco EGL error')
 
 from bullet_envs.create_env import create_multigoal_gym_env, create_minitouch_env
 
