@@ -53,10 +53,10 @@ class Workspace:
         task = PRIMAL_TASKS[self.cfg.domain]
         self.train_env = dmc.make(task, cfg.obs_type,
                                   cfg.frame_stack, cfg.action_repeat,
-                                  cfg.seed)
+                                  cfg.seed, cfg)
         self.eval_env = dmc.make(task, cfg.obs_type,
                                  cfg.frame_stack, cfg.action_repeat,
-                                 cfg.seed)
+                                 cfg.seed, cfg)
 
         # create agent
         self.agent = make_agent(cfg.obs_type,
@@ -224,8 +224,9 @@ class Workspace:
         with snapshot.open('wb') as f:
             torch.save(payload, f)
 
-
+# print('Using temp hyperparameters')
 @hydra.main(config_path='.', config_name='pretrain')
+# @hydra.main(config_path='.', config_name='pretrain_test')
 def main(cfg):
     from pretrain import Workspace as W
     root_dir = Path.cwd()

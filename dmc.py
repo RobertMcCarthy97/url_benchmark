@@ -3,11 +3,13 @@ from typing import Any, NamedTuple
 
 import dm_env
 import numpy as np
-from dm_control import manipulation, suite
-from dm_control.suite.wrappers import action_scale, pixels
+# from dm_control import suite
+# from dm_control.suite.wrappers import action_scale, pixels
 from dm_env import StepType, specs
 
 import custom_dmc_tasks as cdmc
+
+from bullet_envs.create_env import create_multigoal_gym_env, create_minitouch_env
 
 
 class ExtendedTimeStep(NamedTuple):
@@ -273,6 +275,9 @@ def _make_jaco(obs_type, domain, task, frame_stack, action_repeat, seed):
 
 
 def _make_dmc(obs_type, domain, task, frame_stack, action_repeat, seed):
+    from dm_control import suite
+    from dm_control.suite.wrappers import pixels
+    
     visualize_reward = False
     if (domain, task) in suite.ALL_TASKS:
         env = suite.load(domain,
@@ -299,7 +304,9 @@ def _make_dmc(obs_type, domain, task, frame_stack, action_repeat, seed):
     return env
 
 
-def make(name, obs_type, frame_stack, action_repeat, seed):
+def _make_mujoco(name, obs_type, frame_stack, action_repeat, seed):
+    from dm_control.suite.wrappers import action_scale
+    
     assert obs_type in ['states', 'pixels']
     domain, task = name.split('_', 1)
     domain = dict(cup='ball_in_cup').get(domain, domain)
@@ -315,3 +322,33 @@ def make(name, obs_type, frame_stack, action_repeat, seed):
     env = action_scale.Wrapper(env, minimum=-1.0, maximum=+1.0)
     env = ExtendedTimeStepWrapper(env)
     return env
+
+def _make_bullet(name, obs_type, frame_stack, action_repeat, seed, cfg):
+    import bullet_envs.dummy_action_scale as action_scale
+    
+    assert cfg.suite in ['multigoal', 'minitouch']
+    if cfg.suite == 'multigoal':
+        env = create_multigoal_gym_env(task=cfg.bullet_task)
+    else:
+        env = create_minitouch_env(task=cfg.bullet_task)
+    
+    # add wrappers
+    env = ActionDTypeWrapper(env, np.float32)
+    env = ActionRepeatWrapper(env, action_repeat)
+    
+    if obs_type == 'pixels':
+        env = FrameStackWrapper(env, frame_stack)
+    else:
+        raise NotImplementedError("state obs not implemented for bullet envs")
+        env = ObservationDTypeWrapper(env, np.float32)
+        
+    env = action_scale.Wrapper(env, minimum=-1.0, maximum=+1.0)
+    env = ExtendedTimeStepWrapper(env)
+    return env
+
+def make(name, obs_type, frame_stack, action_repeat, seed, cfg):
+    print('Making {} env'.format(cfg.suite))
+    if cfg.suite=='dmc':
+        return _make_mujoco(name, obs_type, frame_stack, action_repeat, seed)
+    else:
+        return _make_bullet(name, obs_type, frame_stack, action_repeat, seed, cfg)

@@ -14,12 +14,24 @@ class Encoder(nn.Module):
 
         assert len(obs_shape) == 3
         self.repr_dim = 32 * 35 * 35
+        print('obs_shape: {}'.format(obs_shape))
+        print('OG repr_dim: {}'.format(self.repr_dim))
 
         self.convnet = nn.Sequential(nn.Conv2d(obs_shape[0], 32, 3, stride=2),
                                      nn.ReLU(), nn.Conv2d(32, 32, 3, stride=1),
                                      nn.ReLU(), nn.Conv2d(32, 32, 3, stride=1),
                                      nn.ReLU(), nn.Conv2d(32, 32, 3, stride=1),
                                      nn.ReLU())
+        
+        batch_shape = obs_shape.copy()
+        batch_shape.insert(0,1) 
+        fake_obs = torch.zeros(tuple(batch_shape))
+        print('fake_obs.shape: {}'.format(fake_obs.shape))
+        rep = self.convnet(fake_obs).detach().numpy()
+        print('output rep: {}'.format(rep.shape))
+        self.repr_dim = 1
+        for dim in np.shape(rep): self.repr_dim *= dim
+        print('New repr_dim: {}\n'.format(self.repr_dim))
 
         self.apply(utils.weight_init)
 
