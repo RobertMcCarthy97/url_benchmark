@@ -154,7 +154,7 @@ class DMEnvFromGym(dm_env.Environment):
   def reset(self) -> dm_env.TimeStep:
     self._reset_next_step = False
     observation = self.gym_env.reset()
-    self._last_observation = observation['observation']
+    self._last_observation = observation['pixels']
     return dm_env.restart(observation)
 
   def step(self, action: int) -> dm_env.TimeStep:
@@ -163,7 +163,7 @@ class DMEnvFromGym(dm_env.Environment):
 
     # Convert the gym step result to a dm_env TimeStep.
     observation, reward, done, info = self.gym_env.step(action)
-    self._last_observation = observation['observation']
+    self._last_observation = observation['pixels']
     self._reset_next_step = done
 
     if done:
