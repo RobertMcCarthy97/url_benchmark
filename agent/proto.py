@@ -165,7 +165,11 @@ class ProtoAgent(DDPGAgent):
             obs = self.aug(obs)
             next_obs = self.aug(next_obs)
 
-        if self.reward_free:
+        
+        #### MARK CHANGE >
+        reward = 0
+        
+        if self.include_r_intr:
             metrics.update(self.update_proto(obs, next_obs, step))
 
             with torch.no_grad():
@@ -173,9 +177,11 @@ class ProtoAgent(DDPGAgent):
 
             if self.use_tb or self.use_wandb:
                 metrics['intr_reward'] = intr_reward.mean().item()
-            reward = intr_reward
-        else:
-            reward = extr_reward
+            reward += intr_reward
+            
+        if self.include_r_extr:
+            reward += extr_reward
+        #### MARK CHANGE <
 
         if self.use_tb or self.use_wandb:
             metrics['extr_reward'] = extr_reward.mean().item()

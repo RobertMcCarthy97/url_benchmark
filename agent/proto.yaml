@@ -2,6 +2,8 @@
 _target_: agent.proto.ProtoAgent
 name: proto
 reward_free: ${reward_free}
+include_r_intr: ${include_r_intr}
+include_r_extr: ${include_r_extr}
 obs_type: ??? # to be specified later
 obs_shape: ??? # to be specified later
 action_shape: ??? # to be specified later

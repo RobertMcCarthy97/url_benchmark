@@ -1,3 +1,7 @@
+- Check normalisation working with state obs 
+
+
+
 # The Unsupervised Reinforcement Learning Benchmark (URLB)
 
 URLB provides a set of leading algorithms for unsupervised reinforcement learning where agents first pre-train without access to extrinsic rewards and then are finetuned to downstream tasks.

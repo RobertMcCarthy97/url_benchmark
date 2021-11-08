@@ -2,8 +2,12 @@ defaults:
   - agent: ddpg
   - override hydra/launcher: submitit_local
 
+#### NEW
 suite: dmc
 bullet_task: reach
+include_r_intr: True
+include_r_extr: False
+####
 
 # mode
 reward_free: true

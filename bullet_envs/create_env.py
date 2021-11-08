@@ -35,6 +35,8 @@ class MiniTouchObsWrapper(gym.ObservationWrapper):
         return obs_dict
 
 def create_multigoal_gym_env(task='reach'):
+    # TODO: change image size, include depth image (and make sure compatible with code)
+    
     camera_setup = [
         {
             'cameraEyePosition': [-1.0, 0.25, 0.6],

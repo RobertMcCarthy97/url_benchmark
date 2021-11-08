@@ -24,6 +24,7 @@ module load anaconda
 source activate drqv2
 
 # command to use
-python3 pretrain.py agent=proto obs_type=pixels suite=multigoal bullet_task=push
+# python3 pretrain.py agent=proto obs_type=pixels suite=multigoal bullet_task=push
+python3 finetune.py agent=proto obs_type=pixels suite=multigoal bullet_task=push include_r_intr=true snapshot_ts=0
 
 # sbatch --partition=gpu train.sh

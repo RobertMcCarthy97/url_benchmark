@@ -2,6 +2,13 @@ defaults:
   - agent: ddpg
   - override hydra/launcher: submitit_local
 
+#### NEW
+suite: dmc
+bullet_task: reach
+include_r_intr: false
+include_r_extr: true
+####
+
 # mode
 reward_free: false
 # task settings
@@ -30,7 +37,7 @@ seed: 1
 device: cuda
 save_video: true
 save_train_video: false
-use_tb: false
+use_tb: true
 use_wandb: false
 # experiment
 experiment: exp
