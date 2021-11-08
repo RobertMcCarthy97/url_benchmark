@@ -11,7 +11,7 @@
 #SBATCH --ntasks-per-node=16
 
 # specify the walltime e.g 20 mins
-#SBATCH -t 10:20:00
+#SBATCH -t 20:20:00
 
 # set to email at start,end and failed jobs
 #SBATCH --mail-type=ALL
