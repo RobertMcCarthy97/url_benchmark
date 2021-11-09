@@ -26,6 +26,6 @@ source activate drqv2
 # command to use
 # python3 pretrain.py agent=proto obs_type=pixels suite=multigoal bullet_task=push
 # python3 finetune.py agent=proto obs_type=pixels suite=multigoal bullet_task=push include_r_intr=true snapshot_ts=0
-python3 finetune.py agent=icm obs_type=pixels suite=minitouch bullet_task=Pushing-v0 include_r_intr=true snapshot_ts=0 update_encoder=true
+python3 finetune.py agent=icm obs_type=pixels suite=multigoal bullet_task=push include_r_intr=true snapshot_ts=0 update_encoder=true
 
 # sbatch --partition=gpu train.sh
