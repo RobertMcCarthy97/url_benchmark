@@ -50,6 +50,7 @@ class Workspace:
                                   cfg.action_repeat, cfg.seed, cfg)
         self.eval_env = dmc.make(cfg.task, cfg.obs_type, cfg.frame_stack,
                                  cfg.action_repeat, cfg.seed, cfg)
+        print('obs spec: {}'.format(self.train_env.observation_spec()))
 
         # create agent
         self.agent = make_agent(cfg.obs_type,
@@ -244,7 +245,8 @@ class Workspace:
                 return payload
         return None
 
-
+# print('\nusing test hyperparameters!\n')
+# @hydra.main(config_path='.', config_name='finetune_test')
 @hydra.main(config_path='.', config_name='finetune')
 def main(cfg):
     from finetune import Workspace as W

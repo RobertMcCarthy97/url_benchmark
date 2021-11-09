@@ -168,7 +168,6 @@ class ProtoAgent(DDPGAgent):
         
         #### MARK CHANGE >
         reward = 0
-        
         if self.include_r_intr:
             metrics.update(self.update_proto(obs, next_obs, step))
 

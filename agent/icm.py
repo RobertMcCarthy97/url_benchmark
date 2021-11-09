@@ -97,7 +97,10 @@ class ICMAgent(DDPGAgent):
         with torch.no_grad():
             next_obs = self.aug_and_encode(next_obs)
 
-        if self.reward_free:
+        #### MARK CHANGE >
+        reward = 0
+        if self.include_r_intr:
+            # Update model before calculating intrinsic reward??
             metrics.update(
                 self.update_icm(obs.detach(), action, next_obs.detach(), step))
 
@@ -107,9 +110,11 @@ class ICMAgent(DDPGAgent):
 
             if self.use_tb or self.use_wandb:
                 metrics['intr_reward'] = intr_reward.mean().item()
-            reward = intr_reward
-        else:
-            reward = extr_reward
+            reward += intr_reward
+            
+        if self.include_r_extr:
+            reward += extr_reward
+        #### MARK CHANGE <
 
         if self.use_tb or self.use_wandb:
             metrics['extr_reward'] = extr_reward.mean().item()

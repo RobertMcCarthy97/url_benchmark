@@ -2,7 +2,7 @@ import pybullet_multigoal_gym as pmg
 import minitouch.env
 import gym
 from bullet_envs import gym_wrappers
-# import numpy as np
+import numpy as np
 
 class MultiGoalObsWrapper(gym.ObservationWrapper):
     def __init__(self, env):
@@ -25,13 +25,20 @@ class MiniTouchObsWrapper(gym.ObservationWrapper):
         
         self.observation_space = gym.spaces.Dict(
                 {
-                    "pixels": env.observation_space[0],
+                    "pixels": gym.spaces.Box(low=0.0, high=255.0, shape=self.reset()['pixels'].shape, dtype=np.float32),
                     "state": env.observation_space[1]
                 }
             )
-    
+        print('WARNING:manually creating obs space!!!')
+        
+        
     def observation(self, obs):
         obs_dict = {'pixels': obs[0], 'state': obs[1]}
+        # is grayscale so increase to 3 image dims
+        obs_dict['pixels'] = np.tile(obs_dict['pixels'], (3,1,1))
+        # move image channel
+        obs_dict['pixels'] = obs_dict['pixels'].transpose(1,2,0)
+        
         return obs_dict
 
 def create_multigoal_gym_env(task='reach'):
@@ -48,30 +55,22 @@ def create_multigoal_gym_env(task='reach'):
     ]
     
     env = pmg.make_env(
-        # task args ['reach', 'push', 'slide', 'pick_and_place', 
-        #            'block_stack', 'block_rearrange', 'chest_pick_and_place', 'chest_push']
+        # task args ['reach', 'push', 'slide', 'pick_and_place']
         task=task,
-        gripper='parallel_jaw',
-        num_block=4,  # only meaningful for multi-block tasks
         render=False,
-        binary_reward=False,
+        binary_reward=True,
         max_episode_steps=100,
         # image observation args
         image_observation=True,
         depth_image=False,
-        goal_image=False,
-        visualize_target=True,
         camera_setup=camera_setup,
-        observation_cam_id=0,
-        goal_cam_id=0,
-        # curriculum args
-        use_curriculum=False,
-        num_goals_to_generate=90)
+        )
     
     env = MultiGoalObsWrapper(env)
     env = gym_wrappers.DMEnvFromGym(env)
     
     return env
+
 
 def create_minitouch_env(task="Pushing-v0"):
     env = gym.make(task)
